@@ -1,0 +1,25 @@
+spec:
+  containers:
+    - name: takeoff
+      image: fqlpbpi-ga70241.registry.snowflakecomputing.com/container_hol_db/public/image_repo/takeoff:dev
+      env:
+        LICENSE_KEY: "MYCIR-ONXJS-DWAXC-PNGHW"
+        TAKEOFF_MODEL_NAME: "TheBloke/Llama-2-7B-Chat-AWQ"
+        TAKEOFF_DEVICE: "cuda"
+      volumeMounts:
+        - name: takeoff-models
+          mountPath: /code/models
+      resources:
+        requests:
+          nvidia.com/gpu: 1
+        limits:
+          nvidia.com/gpu: 1
+  endpoints:
+    - name: takeoff-frontend
+      port: 3000
+      public: true
+  volumes:
+    - name: takeoff-models
+      source: "@volumes/takeoff-models"
+      uid: 1000
+      gid: 1000

@@ -78,7 +78,7 @@ Check if the assets/image is successfully listed in the Snowpark registry:
 
 ```sql
 USE ROLE CONTAINER_USER_ROLE;
-CALL SYSTEM$REGISTRY_LIST_assets/imageS('/CONTAINER_HOL_DB/PUBLIC/assets/image_REPO');
+CALL SYSTEM$REGISTRY_LIST_IMAGES('/CONTAINER_HOL_DB/PUBLIC/IMAGE_REPO');
 ```
 
 **Example Output**:

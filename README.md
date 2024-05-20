@@ -2,12 +2,27 @@
 
 ## Table of Contents
 
-- [Project Title](#project-title)
+- [Integration Guide: Takeoff with Snowflake](#integration-guide-takeoff-with-snowflake)
   - [Table of Contents](#table-of-contents)
   - [About ](#about-)
   - [Getting Started ](#getting-started-)
     - [Prerequisites](#prerequisites)
-    - [Step by step guide](#step-by-step-guide)
+  - [Step-by-Step Setup Guide](#step-by-step-setup-guide)
+    - [Step 1: Connect to Snowflake in VSCode](#step-1-connect-to-snowflake-in-vscode)
+    - [Step 2: Initialize Snowpark Environment](#step-2-initialize-snowpark-environment)
+    - [Step 3: Configure OAuth and Compute Resources](#step-3-configure-oauth-and-compute-resources)
+    - [Step 4: Verify assets/image Repositories](#step-4-verify-assetsimage-repositories)
+    - [Step 5: Docker Login](#step-5-docker-login)
+    - [Step 6: Push the Takeoff assets/image](#step-6-push-the-takeoff-assetsimage)
+    - [Step 7: Verify the assets/image Upload](#step-7-verify-the-assetsimage-upload)
+  - [Creating a Service with Snowflake](#creating-a-service-with-snowflake)
+    - [Step 8: Prepare the Spec YAML](#step-8-prepare-the-spec-yaml)
+    - [Step 9: Create and Test the Service](#step-9-create-and-test-the-service)
+    - [Step 10: Access Takeoff via Ingress URL](#step-10-access-takeoff-via-ingress-url)
+  - [Optional: Use Takeoff in Snowflake Function](#optional-use-takeoff-in-snowflake-function)
+    - [Creating the Function](#creating-the-function)
+    - [Testing the Function](#testing-the-function)
+    - [End-to-End Example](#end-to-end-example)
 
 ## About <a name = "about"></a>
 
@@ -123,5 +138,34 @@ Enter your username and password and then you should see takeoff frontend:
 
 ![takeoff frontend](assets/image-5.png)
 
+
+## Optional: Use Takeoff in Snowflake Function
+
+For those looking to fully leverage the capabilities of this integration, we offer the option to invoke Takeoff directly from a Snowflake function. We've provided an example in `src/test_function.sql` to help you get started.
+
+### Creating the Function
+
+Create a Snowflake function that calls the Takeoff service by executing the following SQL command:
+
+```sql
+CREATE OR REPLACE FUNCTION generate (input VARIANT)
+RETURNS VARIANT
+SERVICE=TAKEOFF_SERVICE      -- Snowpark Container Service name
+ENDPOINT='takeoff-snowflake' -- The endpoint within the container
+MAX_BATCH_ROWS=5             -- Limit the size of the batch
+AS '/generate_snowflake';    -- The API endpoint
+```
+
+### Testing the Function
+
+Test the function with the following SQL command to ensure it is working as expected:
+
+```sql
+SELECT generate(OBJECT_CONSTRUCT('text', 'list three things to do in London')) AS result;
+```
+
+### End-to-End Example
+
+For a comprehensive example that includes updating a table using the service API, refer to `test_function.sql` in the source directory. This script demonstrates how to integrate and utilize the Takeoff API in Snowflake for practical applications.
 
 ---

@@ -11,7 +11,7 @@
 
 ## About <a name = "about"></a>
 
-This guide will help you integrate Takeoff with Snowflake by pushing images to Snowpark Container Services and setting up a service using a YAML spec file.
+This guide will help you integrate Takeoff with Snowflake by pushing assets/images to Snowpark Container Services and setting up a service using a YAML spec file.
 
 ## Getting Started <a name="getting_started"></a>
 
@@ -28,7 +28,7 @@ This setup is essential for managing the Snowflake configurations and executing 
 
 ## Step-by-Step Setup Guide
 
-Follow these detailed steps to complete the integration of Takeoff with Snowflake. Each step includes precise actions required to configure and verify each part of the process, ensuring a successful setup. Please refer to the main setup guide for detailed commands and further instructions on executing SQL scripts and managing Docker images within Snowflake.
+Follow these detailed steps to complete the integration of Takeoff with Snowflake. Each step includes precise actions required to configure and verify each part of the process, ensuring a successful setup. Please refer to the main setup guide for detailed commands and further instructions on executing SQL scripts and managing Docker assets/images within Snowflake.
 
 
 ### Step 1: Connect to Snowflake in VSCode
@@ -40,20 +40,20 @@ Execute the `setup_00.sql` to set up the roles, databases, warehouses, and stage
 ### Step 3: Configure OAuth and Compute Resources
 Run `setup_01.sql` to configure OAuth, network policies, and compute resources (GPU).
 
-### Step 4: Verify Image Repositories
-Use the SQL command below to list your image repositories:
+### Step 4: Verify assets/image Repositories
+Use the SQL command below to list your assets/image repositories:
 
 ```sql
-SHOW IMAGE REPOSITORIES IN SCHEMA CONTAINER_HOL_DB.PUBLIC;
+SHOW assets/image REPOSITORIES IN SCHEMA CONTAINER_HOL_DB.PUBLIC;
 ```
 **Example Output**:
-![Show Image repositories](image.png)
+![Show assets/image repositories](assets/image.png)
 
 - **Important**: Notice the difference between REPOSITORY_URL and REGISTRY_HOSTNAME:
 
 ```
 # example output
-REPOSITORY_URL: fqlpbpi-ga70241.registry.snowflakecomputing.com/container_hol_db/public/image_repo
+REPOSITORY_URL: fqlpbpi-ga70241.registry.snowflakecomputing.com/container_hol_db/public/assets/image_repo
 REGISTRY_HOSTNAME: fqlpbpi-ga70241.registry.snowflakecomputing.com
 ```
 
@@ -65,24 +65,24 @@ Login to the Snowflake repository using the Docker CLI:
 docker login <REGISTRY_HOSTNAME> -u <username>
 ```
 
-### Step 6: Push the Takeoff Image
-Tag and push the Takeoff image to the remote repository:
+### Step 6: Push the Takeoff assets/image
+Tag and push the Takeoff assets/image to the remote repository:
 
 ```bash
 docker tag tytn/takeoff:0.14.3-gpu <REPOSITORY_URL>/takeoff:dev
 docker push <REPOSITORY_URL>/takeoff:dev
 ```
 
-### Step 7: Verify the Image Upload
-Check if the image is successfully listed in the Snowpark registry:
+### Step 7: Verify the assets/image Upload
+Check if the assets/image is successfully listed in the Snowpark registry:
 
 ```sql
 USE ROLE CONTAINER_USER_ROLE;
-CALL SYSTEM$REGISTRY_LIST_IMAGES('/CONTAINER_HOL_DB/PUBLIC/IMAGE_REPO');
+CALL SYSTEM$REGISTRY_LIST_assets/imageS('/CONTAINER_HOL_DB/PUBLIC/assets/image_REPO');
 ```
 
 **Example Output**:
-![takeoff iamge list](image-1.png)
+![takeoff iamge list](assets/image-1.png)
 
 ## Creating a Service with Snowflake
 
@@ -94,7 +94,7 @@ snow object stage copy src/takeoff-snowflake.yaml @specs --overwrite --connectio
 ```
 
 **Example Output**:
-![takoeff spec upload](image-2.png)
+![takoeff spec upload](assets/image-2.png)
 
 ### Step 9: Create and Test the Service
 Create the service using `takeoff_service.sql` and verify its status:
@@ -112,16 +112,16 @@ SHOW ENDPOINTS IN SERVICE TAKEOFF_SERVICE;
 ```
 
 **Example Output**:
-![takeoff ingress](image-3.png)
+![takeoff ingress](assets/image-3.png)
 
 
 Now you can use your favourate browser go to the ingress url and try out takeoff!
 
-![Snowflake Oauth](image-4.png)
+![Snowflake Oauth](assets/image-4.png)
 
 Enter your username and password and then you should see takeoff frontend:
 
-![takeoff frontend](image-5.png)
+![takeoff frontend](assets/image-5.png)
 
 
 ---

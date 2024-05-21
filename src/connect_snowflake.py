@@ -1,10 +1,17 @@
 import snowflake.connector
 import requests
+import os
+
+user = os.getenv('SNOWFLAKE_USER', 'yichengwang')
+password = os.getenv('SNOWFLAKE_PASSWORD')
+account = os.getenv('SNOWFLAKE_ACCOUNT', 'fqlpbpi-ga70241')
+# Set this to the ingress endpoint URL for your service
+url = os.getenv('SNOWFLAKE_INGRESS_URL', 'https://algse-fqlpbpi-ga70241.snowflakecomputing.app')
 
 ctx = snowflake.connector.connect(
-   user="<username>",# username
-   password="<your_password>", # insert password here
-   account="<org>-<account>",
+   user=user,
+   password=password,
+   account=account,
    session_parameters={
       'PYTHON_CONNECTOR_QUERY_RESULT_FORMAT': 'json'
    })
@@ -20,13 +27,11 @@ headers = {
     'Content-Type': 'application/json'
     }
 
-print(headers)
-# Set this to the ingress endpoint URL for your service
-url = 'https://algr4-fqlpbpi-ga70241.snowflakecomputing.app'
-
+print(f'Ingress URL: {url}')
+print(f'Token: {token}')
 
 data = {
-   "text": "Hello, Snowflake!"
+   "text": "List three things to do in London: "
 }
 
 # Validate the connection.

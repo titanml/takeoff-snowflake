@@ -59,7 +59,7 @@ Run `setup_01.sql` to configure OAuth, network policies, and compute resources (
 Use the SQL command below to list your assets/image repositories:
 
 ```sql
-SHOW assets/image REPOSITORIES IN SCHEMA CONTAINER_HOL_DB.PUBLIC;
+SHOW IMAGE REPOSITORIES IN SCHEMA CONTAINER_HOL_DB.PUBLIC;
 ```
 **Example Output**:
 ![Show assets/image repositories](assets/image.png)

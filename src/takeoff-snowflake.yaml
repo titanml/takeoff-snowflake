@@ -4,11 +4,11 @@ spec:
       image: fqlpbpi-ga70241.registry.snowflakecomputing.com/container_hol_db/public/image_repo/takeoff:snowflake
       env:
         LICENSE_KEY: "" # Your takeoff license key
+        TAKEOFF_MODEL_NAME: "TitanML/Meta-Llama-3-8B-Instruct-AWQ-4bit"
+        TAKEOFF_DEVICE: "cuda"
       volumeMounts:
         - name: takeoff-models
           mountPath: /code/models
-        - name: takeoff-config
-          mountPath: /code/config.yaml
       resources:
         requests:
           nvidia.com/gpu: 1
@@ -18,6 +18,9 @@ spec:
     - name: takeoff-frontend
       port: 3000
       public: true
+    - name: takeoff-management
+      port: 3001
+      public: true
     - name: takeoff-snowflake
       port: 3004
       public: true
@@ -26,7 +29,3 @@ spec:
       source: "@volumes/takeoff-models"
       uid: 1000
       gid: 1000
-    - name: takeoff-config
-      source: "@volumes/takeoff-config.yaml"
-      uid: 1001
-      gid: 1001

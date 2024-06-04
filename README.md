@@ -17,6 +17,7 @@
     - [Step 7: Verify the assets/image Upload](#step-7-verify-the-assetsimage-upload)
   - [Creating a Service with Snowflake](#creating-a-service-with-snowflake)
     - [Step 8: Prepare the Spec YAML](#step-8-prepare-the-spec-yaml)
+    - [Step 8b (Optional): Using Takeoff Config File](#step-8b-optional-using-takeoff-config-file)
     - [Step 9: Create and Test the Service](#step-9-create-and-test-the-service)
     - [Step 10: Access Takeoff via Ingress URL](#step-10-access-takeoff-via-ingress-url)
   - [Optional: Use Takeoff in Snowflake Function](#optional-use-takeoff-in-snowflake-function)
@@ -110,6 +111,30 @@ snow object stage copy src/takeoff-snowflake.yaml @specs --overwrite --connectio
 
 **Example Output**:
 ![takoeff spec upload](assets/image-2.png)
+
+### Step 8b (Optional): Using Takeoff Config File
+
+If you prefer using a YAML configuration file for the Takeoff server instead of environment variables, follow these instructions:
+
+1. **Upload the Configuration File**:
+   Use the command below to upload your `takeoff-config.yaml` file to the designated volume. Make sure to replace `src/takeoff-config.yaml` with the path to your YAML file, and `CONTAINER_hol` with your actual container connection name.
+
+   ```sql
+   snow object stage copy src/takeoff-config.yaml @volumes/ --overwrite --connection CONTAINER_hol 
+   ```
+
+2. **Modify the Spec YAML File**:
+   Update the `volumes` section in your specification YAML file to include the `takeoff-config.yaml` file. Add the following block to your existing `volumes` list:
+
+   ```yaml
+   - name: takeoff-config
+     source: "@volumes/takeoff-config.yaml"
+     uid: 1001
+     gid: 1001
+   ```
+
+   Ensure this entry appears alongside any existing volume definitions, modifying the `uid` and `gid` if necessary to suit your permissions requirements.
+
 
 ### Step 9: Create and Test the Service
 Create the service using `takeoff_service.sql` and verify its status:

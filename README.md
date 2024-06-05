@@ -11,13 +11,12 @@
     - [Step 1: Connect to Snowflake in VSCode](#step-1-connect-to-snowflake-in-vscode)
     - [Step 2: Initialize Snowpark Environment](#step-2-initialize-snowpark-environment)
     - [Step 3: Configure OAuth and Compute Resources](#step-3-configure-oauth-and-compute-resources)
-    - [Step 4: Verify assets/image Repositories](#step-4-verify-assetsimage-repositories)
+    - [Step 4: Verify Image Repositories](#step-4-verify-image-repositories)
     - [Step 5: Docker Login](#step-5-docker-login)
-    - [Step 6: Push the Takeoff assets/image](#step-6-push-the-takeoff-assetsimage)
-    - [Step 7: Verify the assets/image Upload](#step-7-verify-the-assetsimage-upload)
+    - [Step 6: Push the Takeoff Image](#step-6-push-the-takeoff-image)
+    - [Step 7: Verify the Image Upload](#step-7-verify-the-image-upload)
   - [Creating a Service with Snowflake](#creating-a-service-with-snowflake)
     - [Step 8: Prepare the Spec YAML](#step-8-prepare-the-spec-yaml)
-    - [Step 8b (Optional): Using Takeoff Config File](#step-8b-optional-using-takeoff-config-file)
     - [Step 9: Create and Test the Service](#step-9-create-and-test-the-service)
     - [Step 10: Access Takeoff via Ingress URL](#step-10-access-takeoff-via-ingress-url)
   - [Optional: Use Takeoff in Snowflake Function](#optional-use-takeoff-in-snowflake-function)
@@ -27,7 +26,7 @@
 
 ## About <a name = "about"></a>
 
-This guide will help you integrate Takeoff with Snowflake by pushing assets/images to Snowpark Container Services and setting up a service using a YAML spec file.
+This guide will help you integrate Takeoff with Snowflake by pushing images to Snowpark Container Services and setting up a service using a YAML spec file.
 
 ## Getting Started <a name="getting_started"></a>
 
@@ -44,7 +43,7 @@ This setup is essential for managing the Snowflake configurations and executing 
 
 ## Step-by-Step Setup Guide
 
-Follow these detailed steps to complete the integration of Takeoff with Snowflake. Each step includes precise actions required to configure and verify each part of the process, ensuring a successful setup. Please refer to the main setup guide for detailed commands and further instructions on executing SQL scripts and managing Docker assets/images within Snowflake.
+Follow these detailed steps to complete the integration of Takeoff with Snowflake. Each step includes precise actions required to configure and verify each part of the process, ensuring a successful setup. Please refer to the main setup guide for detailed commands and further instructions on executing SQL scripts and managing Docker images within Snowflake.
 
 
 ### Step 1: Connect to Snowflake in VSCode
@@ -56,20 +55,20 @@ Execute the `setup_00.sql` to set up the roles, databases, warehouses, and stage
 ### Step 3: Configure OAuth and Compute Resources
 Run `setup_01.sql` to configure OAuth, network policies, and compute resources (GPU).
 
-### Step 4: Verify assets/image Repositories
-Use the SQL command below to list your assets/image repositories:
+### Step 4: Verify Image Repositories
+Use the SQL command below to list your images repositories:
 
 ```sql
 SHOW IMAGE REPOSITORIES IN SCHEMA CONTAINER_HOL_DB.PUBLIC;
 ```
 **Example Output**:
-![Show assets/image repositories](assets/image.png)
+![Show Image repositories](assets/image.png)
 
 - **Important**: Notice the difference between REPOSITORY_URL and REGISTRY_HOSTNAME:
 
 ```
 # example output
-REPOSITORY_URL: fqlpbpi-ga70241.registry.snowflakecomputing.com/container_hol_db/public/assets/image_repo
+REPOSITORY_URL: fqlpbpi-ga70241.registry.snowflakecomputing.com/container_hol_db/public/image_repo
 REGISTRY_HOSTNAME: fqlpbpi-ga70241.registry.snowflakecomputing.com
 ```
 
@@ -81,16 +80,16 @@ Login to the Snowflake repository using the Docker CLI:
 docker login <REGISTRY_HOSTNAME> -u <username>
 ```
 
-### Step 6: Push the Takeoff assets/image
-Tag and push the Takeoff assets/image to the remote repository:
+### Step 6: Push the Takeoff Image
+Tag and push the Takeoff image to the remote repository:
 
 ```bash
 docker tag tytn/takeoff:0.14.3-gpu <REPOSITORY_URL>/takeoff:dev
 docker push <REPOSITORY_URL>/takeoff:dev
 ```
 
-### Step 7: Verify the assets/image Upload
-Check if the assets/image is successfully listed in the Snowpark registry:
+### Step 7: Verify the Image Upload
+Check if the image is successfully listed in the Snowpark registry:
 
 ```sql
 USE ROLE CONTAINER_USER_ROLE;
@@ -111,29 +110,6 @@ snow object stage copy src/takeoff-snowflake.yaml @specs --overwrite --connectio
 
 **Example Output**:
 ![takoeff spec upload](assets/image-2.png)
-
-### Step 8b (Optional): Using Takeoff Config File
-
-If you prefer using a YAML configuration file for the Takeoff server instead of environment variables, follow these instructions:
-
-1. **Upload the Configuration File**:
-   Use the command below to upload your `takeoff-config.yaml` file to the designated volume. Make sure to replace `src/takeoff-config.yaml` with the path to your YAML file, and `CONTAINER_hol` with your actual container connection name.
-
-   ```sql
-   snow object stage copy src/takeoff-config.yaml @volumes/ --overwrite --connection CONTAINER_hol 
-   ```
-
-2. **Modify the Spec YAML File**:
-   Update the `volumes` section in your specification YAML file to include the `takeoff-config.yaml` file. Add the following block to your existing `volumes` list:
-
-   ```yaml
-   - name: takeoff-config
-     source: "@volumes/takeoff-config.yaml"
-     uid: 1001
-     gid: 1001
-   ```
-
-   Ensure this entry appears alongside any existing volume definitions, modifying the `uid` and `gid` if necessary to suit your permissions requirements.
 
 
 ### Step 9: Create and Test the Service

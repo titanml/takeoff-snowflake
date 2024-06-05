@@ -1,13 +1,17 @@
 import snowflake.connector
 import requests
 import os
+from dotenv import load_dotenv
 
-user = os.getenv('SNOWFLAKE_USER', 'yichengwang')
+load_dotenv()
+
+user = os.getenv('SNOWFLAKE_USER')
 password = os.getenv('SNOWFLAKE_PASSWORD')
-account = os.getenv('SNOWFLAKE_ACCOUNT', 'fqlpbpi-ga70241')
+account = os.getenv('SNOWFLAKE_ACCOUNT')
 # Set this to the ingress endpoint URL for your service
-url = os.getenv('SNOWFLAKE_INGRESS_URL', 'https://algse-fqlpbpi-ga70241.snowflakecomputing.app')
+url = os.getenv('SNOWFLAKE_INGRESS_URL')
 
+# Create a connection context.
 ctx = snowflake.connector.connect(
    user=user,
    password=password,
